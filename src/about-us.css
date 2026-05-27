@@ -1,0 +1,288 @@
+.about-route {
+  min-height: 100vh;
+  background: var(--hunter-green);
+}
+
+.about-topbar {
+  /* position: sticky; */
+  top: 0;
+  z-index: 40;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.2rem 7vw 0;
+  background: var(--sand-dune);
+}
+
+.about-logo-badge {
+  width: 200px;
+  display: block;
+}
+
+.about-logo-badge img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.about-topnav {
+  display: flex;
+  gap: 1.4rem;
+  padding-top: 0.25rem;
+}
+
+.about-topnav a {
+  color: var(--hunter-green);
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: 0.02rem;
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+.about-topnav a:hover {
+  color: var(--deep-green);
+}
+
+.about-topnav a:focus,
+.about-topnav a:active,
+.about-topnav a:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.about-page {
+  min-height: 100vh;
+  color: var(--cream);
+}
+
+.about-hero {
+  padding: 4.75rem 7vw 2rem;
+}
+
+.about-hero-shell {
+  width: min(1020px, 100%);
+  margin: 0 auto;
+}
+
+/* .about-kicker {
+  color: var(--sand-dune);
+  text-transform: uppercase;
+  letter-spacing: 0.22rem;
+  font-size: 0.82rem;
+  font-weight: 700; */
+/* } */
+
+.about-hero h1 {
+  margin-top: 0.65rem;
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  line-height: 0.96;
+  color: var(--white);
+}
+
+.about-intro {
+  margin-top: 2rem;
+  margin-left: auto;
+  /* width: min(760px, 100%);
+  padding: 1.6rem 1.7rem;
+  border: 1px solid rgba(221, 214, 185, 0.18);
+  background: rgba(244, 241, 230, 0.05);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 24px 60px rgba(7, 12, 9, 0.25); */
+}
+
+.about-intro p {
+  color: rgba(244, 241, 230, 0.84);
+  line-height: 1.8;
+  font-size: clamp(1rem, 1.4vw, 1.22rem);
+}
+
+.about-intro p + p {
+  margin-top: 1rem;
+}
+
+.founders-section {
+  width: min(1120px, calc(100% - 14vw));
+  margin: 0 auto;
+  padding: 1rem 0 5rem;
+}
+
+.founder-card {
+  display: grid;
+  grid-template-columns: minmax(280px, 390px) 1fr;
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4.5rem);
+}
+
+.founder-left .founder-copy {
+  text-align: left;
+  justify-self: start;
+}
+
+.founder-card + .founder-card {
+  margin-top: 3.5rem;
+}
+
+.founder-right {
+  grid-template-columns: 1fr minmax(280px, 390px);
+}
+
+.founder-right .founder-copy {
+  order: 1;
+  /* text-align: right; */
+}
+
+.founder-right .founder-image {
+  order: 2;
+  justify-self: end;
+}
+
+.founder-image {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 34px;
+  border: 1px solid rgba(221, 214, 185, 0.22);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+  background: rgba(244, 241, 230, 0.08);
+}
+
+.founder-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.founder-image-jigar .founder-photo {
+  object-position: center 20%;
+}
+
+.founder-image-dushyant .founder-photo {
+  object-position: center 20%;
+}
+
+.founder-copy span {
+  display: inline-flex;
+  margin-bottom: 0.8rem;
+  padding: 0.38rem 0.8rem;
+  border-radius: 999px;
+  color: var(--sand-dune);
+  background: rgba(221, 214, 185, 0.1);
+  border: 1px solid rgba(221, 214, 185, 0.15);
+  text-transform: uppercase;
+  letter-spacing: 0.14rem;
+  font-size: 0.72rem;
+}
+
+.founder-copy h2 {
+  color: var(--white);
+  font-size: clamp(2.1rem, 4vw, 3.35rem);
+  line-height: 1.04;
+}
+
+.founder-copy p {
+  margin-top: 0.7rem;
+  color: var(--sand-dune);
+  font-size: clamp(1.12rem, 2vw, 1.55rem);
+  font-weight: 700;
+  letter-spacing: 0.04rem;
+}
+
+.footer-divider {
+  width: 100%;
+  height: 1px;
+  background: #000000;
+}
+
+.footer-socials {
+  display: flex;
+  justify-content: center;
+  gap: 0.9rem;
+  margin-bottom: 0.9rem;
+}
+
+.social-link {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid rgba(221, 214, 185, 0.34);
+  color: var(--sand-dune);
+  text-decoration: none;
+  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.social-link:hover {
+  background: var(--sand-dune);
+  color: var(--hunter-green);
+  transform: translateY(-2px);
+}
+
+.social-link svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+@media (max-width: 900px) {
+  .about-hero {
+    padding-top: 3.75rem;
+  }
+
+  .about-topbar {
+    padding-inline: 1rem;
+  }
+
+  .about-logo-badge {
+    width: 160px;
+  }
+
+  .founders-section {
+    width: min(100% - 2rem, 1120px);
+    padding-bottom: 4rem;
+  }
+
+  .founder-card,
+  .founder-right {
+    grid-template-columns: 1fr;
+  }
+
+  .founder-right .founder-copy,
+  .founder-right .founder-image {
+    order: initial;
+    text-align: left;
+    justify-self: stretch;
+  }
+
+  .founder-left .founder-copy {
+    text-align: left;
+    justify-self: stretch;
+  }
+
+  .founder-image {
+    max-width: 420px;
+  }
+}
+
+@media (max-width: 640px) {
+  .about-hero {
+    padding-inline: 1rem;
+  }
+
+  .about-intro {
+    padding: 1.2rem 1rem;
+  }
+
+  .founders-section {
+    width: calc(100% - 2rem);
+  }
+
+  .founder-image {
+    max-width: 100%;
+    border-radius: 24px;
+  }
+}
