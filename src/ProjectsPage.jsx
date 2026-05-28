@@ -89,21 +89,27 @@ function ProjectsPage({ onNavigate, categorySlug = defaultProjectCategory }) {
           </div>
         </section>
 
-        <section className={`project-gallery ${activeCategory.slug === 'details' ? 'details-gallery' : ''}`}>
-          {activeCategory.projects.map((project) => (
-            <article
-              key={project.title}
-              className={`project-card ${activeCategory.slug === 'details' ? 'details-card' : ''}`}
-            >
-              <img src={project.image} alt={project.title} />
-              {activeCategory.slug !== 'details' && (
-                <div className="project-card-copy">
-                  <p>{project.title}</p>
-                </div>
-              )}
-            </article>
-          ))}
-        </section>
+        {activeCategory.projects.length > 0 ? (
+          <section className={`project-gallery ${activeCategory.slug === 'details' ? 'details-gallery' : ''}`}>
+            {activeCategory.projects.map((project) => (
+              <article
+                key={project.id || project.title}
+                className={`project-card ${activeCategory.slug === 'details' ? 'details-card' : ''}`}
+              >
+                <img src={project.image} alt={project.title} />
+                {activeCategory.slug !== 'details' && (
+                  <div className="project-card-copy">
+                    <p>{project.title}</p>
+                  </div>
+                )}
+              </article>
+            ))}
+          </section>
+        ) : (
+          <section className="project-empty-state">
+            <p>No projects added in this category yet.</p>
+          </section>
+        )}
       </main>
 
       <SiteFooter />

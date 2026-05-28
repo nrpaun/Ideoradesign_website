@@ -87,7 +87,9 @@ function HomePage({ onNavigate }) {
   }, [homepageImages]);
   const activeHeroSlide = heroSlides[2] || heroSlides[0];
 
-  const portfolioCategories = useMemo(() => getProjectCategoriesWithImages(projectImages), [projectImages]);
+  const portfolioCategories = useMemo(() => {
+    return getProjectCategoriesWithImages(projectImages).filter((category) => category.projects.length > 0);
+  }, [projectImages]);
 
   useEffect(() => {
     let isMounted = true;
@@ -301,31 +303,33 @@ function HomePage({ onNavigate }) {
             Ideora Design Studio transforms spaces into interiors that blend function with beauty and
             sophistication. Our designs creatively balance space, color, light, and furnishings.
           </p>
-          <div
-            className={`portfolio-slider ${activeProject ? 'has-active' : ''}`}
-            role="tablist"
-            aria-label="Portfolio slider"
-            onMouseLeave={() => setActiveProject('Residential')}
-          >
-            {portfolioCategories.map((item) => (
-              <button
-                type="button"
-                key={item.slug}
-                role="tab"
-                aria-selected={item.name === activeProject}
-                className={`portfolio-slide ${item.name === activeProject ? 'active' : ''}`}
-                onMouseEnter={() => setActiveProject(item.name)}
-                onFocus={() => setActiveProject(item.name)}
-                onClick={(event) => {
-                  setActiveProject(item.name);
-                  onNavigate(event, `/projects/${item.slug}`);
-                }}
-                style={{ backgroundImage: `url(${item.coverImage})` }}
-              >
-                <span>{item.name}</span>
-              </button>
-            ))}
-          </div>
+          {portfolioCategories.length > 0 && (
+            <div
+              className={`portfolio-slider ${activeProject ? 'has-active' : ''}`}
+              role="tablist"
+              aria-label="Portfolio slider"
+              onMouseLeave={() => setActiveProject(portfolioCategories[0]?.name || '')}
+            >
+              {portfolioCategories.map((item) => (
+                <button
+                  type="button"
+                  key={item.slug}
+                  role="tab"
+                  aria-selected={item.name === activeProject}
+                  className={`portfolio-slide ${item.name === activeProject ? 'active' : ''}`}
+                  onMouseEnter={() => setActiveProject(item.name)}
+                  onFocus={() => setActiveProject(item.name)}
+                  onClick={(event) => {
+                    setActiveProject(item.name);
+                    onNavigate(event, `/projects/${item.slug}`);
+                  }}
+                  style={{ backgroundImage: `url(${item.coverImage})` }}
+                >
+                  <span>{item.name}</span>
+                </button>
+              ))}
+            </div>
+          )}
         </section>
 
         {clientReviews.length > 0 && (

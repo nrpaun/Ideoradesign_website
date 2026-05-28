@@ -1,7 +1,3 @@
-import heroimage1 from './assets/heroimage1.jpeg';
-import heroimage2 from './assets/heroimage2.jpeg';
-import heroimage3 from './assets/heroimage3.jpeg';
-
 export const defaultProjectCategory = 'residential';
 
 export const projectCategories = [
@@ -14,15 +10,8 @@ export const projectCategories = [
     quoteAuthor: 'Tadao Ando',
     description:
       'Ideora Design Studio creates residential interiors with warmth, function, and a refined visual identity. Every home is shaped to feel personal, balanced, and deeply connected to the people living in it.',
-    coverImage: heroimage3,
-    projects: [
-      { title: 'Westhills', image: heroimage3 },
-      { title: 'Ashutosh', image: heroimage2 },
-      { title: 'Maa', image: heroimage1 },
-      { title: 'Aarav', image: heroimage2 },
-      { title: 'Nirvaan', image: heroimage1 },
-      { title: 'The Courtyard', image: heroimage3 }
-    ]
+    coverImage: '',
+    projects: []
   },
   {
     slug: 'commercial',
@@ -33,15 +22,8 @@ export const projectCategories = [
     quoteAuthor: 'Frank Gehry',
     description:
       'From offices to hospitality spaces, our commercial work is built around clarity, identity, and experience. We design environments that support business goals while leaving a lasting visual impression.',
-    coverImage: heroimage2,
-    projects: [
-      { title: 'The Lobby House', image: heroimage2 },
-      { title: 'Studio Grid', image: heroimage1 },
-      { title: 'Urban Meet', image: heroimage3 },
-      { title: 'The Workshop', image: heroimage1 },
-      { title: 'Axis Office', image: heroimage2 },
-      { title: 'Public Room', image: heroimage3 }
-    ]
+    coverImage: '',
+    projects: []
   },
   {
     slug: 'details',
@@ -52,21 +34,8 @@ export const projectCategories = [
     quoteAuthor: 'Leonardo da Vinci',
     description:
       'The smallest layers of a project carry the strongest character. Our details portfolio focuses on materials, finishes, custom moments, and carefully resolved intersections that elevate the full space.',
-    coverImage: heroimage1,
-    projects: [
-      { title: 'Light Shelf', image: heroimage1 },
-      { title: 'Oak Edge', image: heroimage3 },
-      { title: 'Tone Wall', image: heroimage2 },
-      { title: 'Stone Line', image: heroimage3 },
-      { title: 'Craft Joinery', image: heroimage1 },
-      { title: 'Warm Accent', image: heroimage2 },
-      { title: 'Soft Corner', image: heroimage3 },
-      { title: 'Framed Niche', image: heroimage1 },
-      { title: 'Texture Wall', image: heroimage2 },
-      { title: 'Calm Passage', image: heroimage1 },
-      { title: 'Material Edge', image: heroimage3 },
-      { title: 'Layered Shelf', image: heroimage2 }
-    ]
+    coverImage: '',
+    projects: []
   }
 ];
 

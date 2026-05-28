@@ -214,12 +214,28 @@ function AdminPage({ onNavigate }) {
     setNotice('');
 
     try {
+      // Validation
+      if (
+        imageForm.categorySlug !== 'details' &&
+        !imageForm.title.trim()
+      ) {
+        throw new Error('Project title is required.');
+      }
+
+      const payload = {
+        ...imageForm,
+        title:
+          imageForm.categorySlug === 'details'
+            ? ''
+            : imageForm.title
+      };
+
       const response = await fetch('/api/project-images', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(imageForm)
+        body: JSON.stringify(payload)
       });
 
       const data = await response.json().catch(() => ({}));
@@ -229,11 +245,13 @@ function AdminPage({ onNavigate }) {
       }
 
       setProjectImages((prev) => [...prev, data.image]);
+
       setImageForm((prev) => ({
         ...initialImageForm,
         categorySlug: prev.categorySlug
       }));
-      setNotice('Image saved. The project page will use database images now.');
+
+      setNotice('Image saved successfully.');
     } catch (error) {
       setNotice(error.message || 'Unable to save image.');
     } finally {
@@ -376,69 +394,66 @@ function AdminPage({ onNavigate }) {
             <span>{reviews.length} saved</span>
           </div>
 
-          <form className="admin-image-form admin-review-form" onSubmit={handleReviewSubmit}>
+          <form className="admin-image-form" onSubmit={handleImageSubmit}>
+            {/* Category */}
             <label>
-              Client name
+              Category
+              <select
+                name="categorySlug"
+                value={imageForm.categorySlug}
+                onChange={handleImageChange}
+              >
+                {projectCategories.map((category) => (
+                  <option key={category.slug} value={category.slug}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            {/* Hide title field for details category */}
+            {imageForm.categorySlug !== 'details' && (
+              <label>
+                Project title
+                <input
+                  type="text"
+                  name="title"
+                  value={imageForm.title}
+                  onChange={handleImageChange}
+                  placeholder="Project title"
+                  required={imageForm.categorySlug !== 'details'}
+                />
+              </label>
+            )}
+
+            {/* Image URL */}
+            <label>
+              Image URL or path
               <input
                 type="text"
-                name="name"
-                value={reviewForm.name}
-                onChange={handleReviewChange}
-                placeholder="Client name"
+                name="imageUrl"
+                value={imageForm.imageUrl}
+                onChange={handleImageChange}
+                placeholder="/images/heroimage1.jpeg"
                 required
               />
             </label>
-            <label>
-              Review
-              <textarea
-                rows="3"
-                name="quote"
-                value={reviewForm.quote}
-                onChange={handleReviewChange}
-                placeholder="Client review text"
-                required
-              />
-            </label>
-            <label>
-              Rating
-              <input
-                type="number"
-                name="rating"
-                value={reviewForm.rating}
-                onChange={handleReviewChange}
-                min="1"
-                max="5"
-                required
-              />
-            </label>
-            <label>
-              Photo URL or path
-              <input
-                type="text"
-                name="photoUrl"
-                value={reviewForm.photoUrl}
-                onChange={handleReviewChange}
-                placeholder="/images/founder.jpg"
-              />
-            </label>
+
+            {/* Sort Order */}
             <label>
               Sort order
               <input
                 type="number"
                 name="sortOrder"
-                value={reviewForm.sortOrder}
-                onChange={handleReviewChange}
+                value={imageForm.sortOrder}
+                onChange={handleImageChange}
                 min="0"
               />
             </label>
-            <button type="submit" disabled={isSavingReview}>
-              {isSavingReview ? 'Saving...' : editingReviewId ? 'Update Review' : 'Add Review'}
+
+            <button type="submit" disabled={isSavingImage}>
+              {isSavingImage ? 'Saving...' : 'Add Image'}
             </button>
-            {editingReviewId && (
-              <button type="button" className="admin-secondary-button" onClick={handleCancelReviewEdit}>
-                Cancel
-              </button>
-            )}
           </form>
 
           <div className="admin-review-grid">
@@ -537,7 +552,7 @@ function AdminPage({ onNavigate }) {
                 name="title"
                 value={imageForm.title}
                 onChange={handleImageChange}
-                placeholder="Example: Westhills"
+                placeholder="Project title"
                 required
               />
             </label>
