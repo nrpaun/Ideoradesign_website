@@ -31,6 +31,7 @@ function AdminPage({ onNavigate }) {
   const [homeImageForm, setHomeImageForm] = useState(initialHomeImageForm);
   const [imageForm, setImageForm] = useState(initialImageForm);
   const [reviewForm, setReviewForm] = useState(initialReviewForm);
+  const [editingReviewId, setEditingReviewId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSavingHomeImage, setIsSavingHomeImage] = useState(false);
   const [isSavingImage, setIsSavingImage] = useState(false);
@@ -115,8 +116,8 @@ function AdminPage({ onNavigate }) {
     setNotice('');
 
     try {
-      const response = await fetch('/api/reviews', {
-        method: 'POST',
+      const response = await fetch(editingReviewId ? `/api/reviews/${editingReviewId}` : '/api/reviews', {
+        method: editingReviewId ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -129,14 +130,39 @@ function AdminPage({ onNavigate }) {
         throw new Error(data.message || 'Unable to save review.');
       }
 
-      setReviews((prev) => [...prev, data.review]);
+      setReviews((prev) => {
+        if (editingReviewId) {
+          return prev.map((review) => (review.id === editingReviewId ? data.review : review));
+        }
+
+        return [...prev, data.review];
+      });
       setReviewForm(initialReviewForm);
-      setNotice('Review saved. The homepage will show database reviews now.');
+      setEditingReviewId(null);
+      setNotice(editingReviewId ? 'Review updated.' : 'Review saved. The homepage will show database reviews now.');
     } catch (error) {
       setNotice(error.message || 'Unable to save review.');
     } finally {
       setIsSavingReview(false);
     }
+  };
+
+  const handleEditReview = (review) => {
+    setEditingReviewId(review.id);
+    setReviewForm({
+      name: review.name,
+      quote: review.quote,
+      rating: review.rating,
+      photoUrl: review.photo_url || '',
+      sortOrder: review.sort_order || 0
+    });
+    setNotice('');
+  };
+
+  const handleCancelReviewEdit = () => {
+    setEditingReviewId(null);
+    setReviewForm(initialReviewForm);
+    setNotice('');
   };
 
   const handleHomeImageSubmit = async (event) => {
@@ -351,8 +377,8 @@ function AdminPage({ onNavigate }) {
             </label>
             <label>
               Review
-              <input
-                type="text"
+              <textarea
+                rows="3"
                 name="quote"
                 value={reviewForm.quote}
                 onChange={handleReviewChange}
@@ -393,8 +419,13 @@ function AdminPage({ onNavigate }) {
               />
             </label>
             <button type="submit" disabled={isSavingReview}>
-              {isSavingReview ? 'Saving...' : 'Add Review'}
+              {isSavingReview ? 'Saving...' : editingReviewId ? 'Update Review' : 'Add Review'}
             </button>
+            {editingReviewId && (
+              <button type="button" className="admin-secondary-button" onClick={handleCancelReviewEdit}>
+                Cancel
+              </button>
+            )}
           </form>
 
           <div className="admin-review-grid">
@@ -406,9 +437,14 @@ function AdminPage({ onNavigate }) {
                 </div>
                 <p>{review.quote}</p>
                 {review.photo_url && <span>{review.photo_url}</span>}
-                <button type="button" onClick={() => handleDeleteReview(review.id)}>
-                  Delete
-                </button>
+                <div className="admin-review-actions">
+                  <button type="button" onClick={() => handleEditReview(review)}>
+                    Edit
+                  </button>
+                  <button type="button" onClick={() => handleDeleteReview(review.id)}>
+                    Delete
+                  </button>
+                </div>
               </article>
             ))}
           </div>

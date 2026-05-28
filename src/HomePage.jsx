@@ -42,34 +42,6 @@ const services = [
   }
 ];
 
-const testimonials = [
-  {
-    name: 'Gaurav Bhalani',
-    quote:
-      'Amazing design, quality work and best execution. Best interior designer in Rajkot. They designed exactly as per requirement and budget.'
-  },
-  {
-    name: 'Changela & Associates',
-    quote: 'This was my second time and it is wonderful to work with, very professional and very accommodating to the client.'
-  },
-  {
-    name: 'TUSHAR WRELTT',
-    quote: 'Interior designing is innovative and feels good for a long time. Truly value for money service.'
-  },
-  {
-    name: 'Ruchit Sherathiya',
-    quote: 'They have unique designs. On-time, dedicated and punctual execution with very creative ideas.'
-  },
-  {
-    name: 'Jignesh Makawana',
-    quote: 'They understood expectations and budget and gave their best shots. Creative, trendy and impressive design.'
-  },
-  {
-    name: 'Mehul Maniar',
-    quote: 'Best Designing, Best Interior Solutions, Very Responsive and more than value for money.'
-  }
-];
-
 function HomePage({ onNavigate }) {
   const [activeProject, setActiveProject] = useState('Residential');
   const [testimonialIndex, setTestimonialIndex] = useState(0);
@@ -90,16 +62,18 @@ function HomePage({ onNavigate }) {
   });
 
   const visibleTestimonials = useMemo(() => {
-    const reviewItems = clientReviews.length > 0 ? clientReviews : testimonials;
+    if (clientReviews.length === 0) {
+      return [];
+    }
 
     return [
-      reviewItems[testimonialIndex % reviewItems.length],
-      reviewItems[(testimonialIndex + 1) % reviewItems.length],
-      reviewItems[(testimonialIndex + 2) % reviewItems.length]
+      clientReviews[testimonialIndex % clientReviews.length],
+      clientReviews[(testimonialIndex + 1) % clientReviews.length],
+      clientReviews[(testimonialIndex + 2) % clientReviews.length]
     ];
   }, [clientReviews, testimonialIndex]);
 
-  const testimonialCount = clientReviews.length > 0 ? clientReviews.length : testimonials.length;
+  const testimonialCount = clientReviews.length;
 
   const heroSlides = useMemo(() => {
     if (homepageImages.length === 0) {
@@ -354,37 +328,39 @@ function HomePage({ onNavigate }) {
           </div>
         </section>
 
-        <section className="section testimonials">
-          <p className="label">TESTIMONIALS</p>
-          <h2>Happy Clients</h2>
+        {clientReviews.length > 0 && (
+          <section className="section testimonials">
+            <p className="label">TESTIMONIALS</p>
+            <h2>Happy Clients</h2>
 
-          <div className="slider-nav">
-            <button
-              type="button"
-              onClick={() => setTestimonialIndex((prev) => (prev - 1 + testimonialCount) % testimonialCount)}
-            >
-              Previous
-            </button>
-            <button type="button" onClick={() => setTestimonialIndex((prev) => (prev + 1) % testimonialCount)}>
-              Next
-            </button>
-          </div>
+            <div className="slider-nav">
+              <button
+                type="button"
+                onClick={() => setTestimonialIndex((prev) => (prev - 1 + testimonialCount) % testimonialCount)}
+              >
+                Previous
+              </button>
+              <button type="button" onClick={() => setTestimonialIndex((prev) => (prev + 1) % testimonialCount)}>
+                Next
+              </button>
+            </div>
 
-          <div className="cards testimonial-grid">
-            {visibleTestimonials.map((item, idx) => (
-              <article key={`${item.name}-${idx}`} className="card testimonial-card">
-                <img src={item.photo_url || `https://picsum.photos/seed/${item.name}/140/140`} alt={item.name} className="avatar" />
-                {item.rating && (
-                  <p className="review-rating" aria-label={`${item.rating} out of 5 stars`}>
-                    {item.rating}/5 client review
-                  </p>
-                )}
-                <p>"{item.quote}"</p>
-                <h3>- {item.name}</h3>
-              </article>
-            ))}
-          </div>
-        </section>
+            <div className="cards testimonial-grid">
+              {visibleTestimonials.map((item, idx) => (
+                <article key={`${item.name}-${idx}`} className="card testimonial-card">
+                  <img src={item.photo_url || `https://picsum.photos/seed/${item.name}/140/140`} alt={item.name} className="avatar" />
+                  {item.rating && (
+                    <p className="review-rating" aria-label={`${item.rating} out of 5 stars`}>
+                      {item.rating}/5 client review
+                    </p>
+                  )}
+                  <p>"{item.quote}"</p>
+                  <h3>- {item.name}</h3>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
 
         <section id="contact" className="section contact">
           <h2 className='contact-display'>Get In Touch</h2>

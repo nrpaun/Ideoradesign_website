@@ -30,7 +30,7 @@ const pool = new Pool(
       }
 );
 
-const defaultClientReviews = [
+const legacyClientReviews = [
   {
     name: 'Gaurav Bhalani',
     quote:
@@ -107,18 +107,14 @@ const initializeDatabase = async () => {
     )
   `);
 
-  const reviewCount = await pool.query('SELECT COUNT(*)::int AS count FROM client_reviews');
-
-  if (reviewCount.rows[0].count === 0) {
-    for (const [index, review] of defaultClientReviews.entries()) {
-      await pool.query(
-        `
-          INSERT INTO client_reviews (name, quote, rating, sort_order)
-          VALUES ($1, $2, $3, $4)
-        `,
-        [review.name, review.quote, review.rating, index]
-      );
-    }
+  for (const review of legacyClientReviews) {
+    await pool.query(
+      `
+        DELETE FROM client_reviews
+        WHERE name = $1 AND quote = $2
+      `,
+      [review.name, review.quote]
+    );
   }
 };
 
@@ -280,6 +276,68 @@ app.post('/api/reviews', async (req, res) => {
     return res.status(500).json({
       ok: false,
       message: 'Failed to save review.'
+    });
+  }
+});
+
+app.put('/api/reviews/:id', async (req, res) => {
+  const { name, quote, rating, photoUrl, sortOrder } = req.body ?? {};
+
+  if (!name || !quote) {
+    return res.status(400).json({
+      ok: false,
+      message: 'Reviewer name and review text are required.'
+    });
+  }
+
+  const numericRating = Number(rating);
+
+  if (!Number.isInteger(numericRating) || numericRating < 1 || numericRating > 5) {
+    return res.status(400).json({
+      ok: false,
+      message: 'Rating must be a whole number from 1 to 5.'
+    });
+  }
+
+  try {
+    const result = await pool.query(
+      `
+        UPDATE client_reviews
+        SET name = $1,
+          quote = $2,
+          rating = $3,
+          photo_url = $4,
+          sort_order = $5
+        WHERE id = $6
+        RETURNING id, name, quote, rating, photo_url, sort_order, created_at
+      `,
+      [
+        name.trim(),
+        quote.trim(),
+        numericRating,
+        photoUrl?.trim() || null,
+        Number.isFinite(Number(sortOrder)) ? Number(sortOrder) : 0,
+        req.params.id
+      ]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({
+        ok: false,
+        message: 'Review was not found.'
+      });
+    }
+
+    return res.json({
+      ok: true,
+      message: 'Review updated successfully.',
+      review: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Error updating review:', error);
+    return res.status(500).json({
+      ok: false,
+      message: 'Failed to update review.'
     });
   }
 });

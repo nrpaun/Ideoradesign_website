@@ -150,7 +150,8 @@
 }
 
 .admin-image-form input,
-.admin-image-form select {
+.admin-image-form select,
+.admin-image-form textarea {
   min-height: 42px;
   border: 1px solid rgba(62, 95, 68, 0.32);
   background: #f8f5ed;
@@ -159,10 +160,19 @@
   font: inherit;
 }
 
+.admin-image-form textarea {
+  resize: vertical;
+}
+
 .admin-image-form button {
   min-height: 42px;
   background: #3e5f44;
   color: #f4f1e6;
+}
+
+.admin-image-form .admin-secondary-button {
+  background: transparent;
+  color: #3e5f44;
 }
 
 .admin-image-form button:disabled {
@@ -175,7 +185,7 @@
 }
 
 .admin-review-form {
-  grid-template-columns: 1fr 1.6fr 0.55fr 1fr 0.6fr auto;
+  grid-template-columns: 1fr 1.6fr 0.55fr 1fr 0.6fr auto auto;
 }
 
 .admin-review-grid {
@@ -214,10 +224,20 @@
   line-height: 1.55;
 }
 
+.admin-review-actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
 .admin-review-card button {
-  width: 100%;
+  flex: 1;
   color: #8a3131;
   border-color: rgba(138, 49, 49, 0.45);
+}
+
+.admin-review-actions button:first-child {
+  color: #3e5f44;
+  border-color: rgba(62, 95, 68, 0.45);
 }
 
 .admin-image-groups {
