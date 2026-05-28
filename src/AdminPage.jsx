@@ -405,7 +405,7 @@ function AdminPage({ onNavigate }) {
                 name="photoUrl"
                 value={reviewForm.photoUrl}
                 onChange={handleReviewChange}
-                placeholder="/images/client.jpg"
+                placeholder="/images/founder.jpg"
               />
             </label>
             <label>
@@ -535,7 +535,7 @@ function AdminPage({ onNavigate }) {
                 name="imageUrl"
                 value={imageForm.imageUrl}
                 onChange={handleImageChange}
-                placeholder="https://example.com/project.jpg"
+                placeholder="/images/heroimage1.jpeg"
                 required
               />
             </label>

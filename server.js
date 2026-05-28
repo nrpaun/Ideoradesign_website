@@ -30,6 +30,32 @@ const pool = new Pool(
       }
 );
 
+const normalizeImagePath = (value) => {
+  const imagePath = value?.trim();
+
+  if (!imagePath) {
+    return null;
+  }
+
+  if (/^(https?:)?\/\//i.test(imagePath) || imagePath.startsWith('/')) {
+    return imagePath;
+  }
+
+  if (imagePath.startsWith('public/images/')) {
+    return `/${imagePath.replace(/^public\//, '')}`;
+  }
+
+  if (imagePath.startsWith('src/assets/')) {
+    return `/images/${path.basename(imagePath)}`;
+  }
+
+  if (imagePath.startsWith('images/')) {
+    return `/${imagePath}`;
+  }
+
+  return imagePath;
+};
+
 const legacyClientReviews = [
   {
     name: 'Gaurav Bhalani',
@@ -261,7 +287,7 @@ app.post('/api/reviews', async (req, res) => {
         name.trim(),
         quote.trim(),
         numericRating,
-        photoUrl?.trim() || null,
+        normalizeImagePath(photoUrl),
         Number.isFinite(Number(sortOrder)) ? Number(sortOrder) : 0
       ]
     );
@@ -315,7 +341,7 @@ app.put('/api/reviews/:id', async (req, res) => {
         name.trim(),
         quote.trim(),
         numericRating,
-        photoUrl?.trim() || null,
+        normalizeImagePath(photoUrl),
         Number.isFinite(Number(sortOrder)) ? Number(sortOrder) : 0,
         req.params.id
       ]
@@ -389,7 +415,7 @@ app.post('/api/project-images', async (req, res) => {
       [
         categorySlug.trim(),
         title.trim(),
-        imageUrl.trim(),
+        normalizeImagePath(imageUrl),
         Number.isFinite(Number(sortOrder)) ? Number(sortOrder) : 0
       ]
     );
@@ -467,7 +493,7 @@ app.post('/api/home-images', async (req, res) => {
         VALUES ($1, $2)
         RETURNING id, image_url, quote
       `,
-      [imageUrl.trim(), quote.trim()]
+      [normalizeImagePath(imageUrl), quote.trim()]
     );
 
     return res.status(201).json({
