@@ -75,6 +75,7 @@ function HomePage({ onNavigate }) {
   const [testimonialIndex, setTestimonialIndex] = useState(0);
   const [homepageImages, setHomepageImages] = useState([]);
   const [projectImages, setProjectImages] = useState([]);
+  const [clientReviews, setClientReviews] = useState([]);
   const [contactForm, setContactForm] = useState({
     name: '',
     phone: '',
@@ -89,12 +90,16 @@ function HomePage({ onNavigate }) {
   });
 
   const visibleTestimonials = useMemo(() => {
+    const reviewItems = clientReviews.length > 0 ? clientReviews : testimonials;
+
     return [
-      testimonials[testimonialIndex % testimonials.length],
-      testimonials[(testimonialIndex + 1) % testimonials.length],
-      testimonials[(testimonialIndex + 2) % testimonials.length]
+      reviewItems[testimonialIndex % reviewItems.length],
+      reviewItems[(testimonialIndex + 1) % reviewItems.length],
+      reviewItems[(testimonialIndex + 2) % reviewItems.length]
     ];
-  }, [testimonialIndex]);
+  }, [clientReviews, testimonialIndex]);
+
+  const testimonialCount = clientReviews.length > 0 ? clientReviews.length : testimonials.length;
 
   const heroSlides = useMemo(() => {
     if (homepageImages.length === 0) {
@@ -139,6 +144,35 @@ function HomePage({ onNavigate }) {
         if (isMounted) {
           setHomepageImages([]);
           setProjectImages([]);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    fetch('/api/reviews')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch client reviews.');
+        }
+
+        return response.json();
+      })
+      .then((data) => {
+        if (!isMounted) {
+          return;
+        }
+
+        setClientReviews(Array.isArray(data) ? data : []);
+      })
+      .catch(() => {
+        if (isMounted) {
+          setClientReviews([]);
         }
       });
 
@@ -327,11 +361,11 @@ function HomePage({ onNavigate }) {
           <div className="slider-nav">
             <button
               type="button"
-              onClick={() => setTestimonialIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length)}
+              onClick={() => setTestimonialIndex((prev) => (prev - 1 + testimonialCount) % testimonialCount)}
             >
               Previous
             </button>
-            <button type="button" onClick={() => setTestimonialIndex((prev) => (prev + 1) % testimonials.length)}>
+            <button type="button" onClick={() => setTestimonialIndex((prev) => (prev + 1) % testimonialCount)}>
               Next
             </button>
           </div>
@@ -339,7 +373,12 @@ function HomePage({ onNavigate }) {
           <div className="cards testimonial-grid">
             {visibleTestimonials.map((item, idx) => (
               <article key={`${item.name}-${idx}`} className="card testimonial-card">
-                <img src={`https://picsum.photos/seed/${item.name}/140/140`} alt={item.name} className="avatar" />
+                <img src={item.photo_url || `https://picsum.photos/seed/${item.name}/140/140`} alt={item.name} className="avatar" />
+                {item.rating && (
+                  <p className="review-rating" aria-label={`${item.rating} out of 5 stars`}>
+                    {item.rating}/5 client review
+                  </p>
+                )}
                 <p>"{item.quote}"</p>
                 <h3>- {item.name}</h3>
               </article>

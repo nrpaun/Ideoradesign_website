@@ -414,6 +414,35 @@ main {
   font-size: 1.6rem;
 }
 
+.testimonial-card h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.testimonial-card h3 a:hover {
+  text-decoration: underline;
+}
+
+.review-summary {
+  color: var(--deep-green);
+  font-weight: 700;
+}
+
+.review-rating {
+  color: var(--hunter-green);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08rem;
+  text-transform: uppercase;
+}
+
+.review-time {
+  display: inline-block;
+  margin-top: 0.5rem;
+  color: rgba(29, 42, 33, 0.68);
+  font-size: 0.82rem;
+}
+
 .services {
   text-align: center;
 }

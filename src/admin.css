@@ -33,7 +33,8 @@
 .admin-nav a,
 .admin-nav button,
 .admin-image-form button,
-.admin-image-card button {
+.admin-image-card button,
+.admin-review-card button {
   border: 1px solid #3e5f44;
   background: transparent;
   color: #3e5f44;
@@ -173,6 +174,52 @@
   grid-template-columns: 1.3fr 1.5fr auto;
 }
 
+.admin-review-form {
+  grid-template-columns: 1fr 1.6fr 0.55fr 1fr 0.6fr auto;
+}
+
+.admin-review-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.admin-review-card {
+  display: grid;
+  gap: 0.55rem;
+  padding: 1rem;
+  border: 1px solid rgba(62, 95, 68, 0.18);
+  background: #fbfaf6;
+}
+
+.admin-review-card div {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  align-items: baseline;
+}
+
+.admin-review-card strong {
+  color: #25352a;
+}
+
+.admin-review-card span {
+  color: #657468;
+  font-size: 0.86rem;
+}
+
+.admin-review-card p {
+  color: #304137;
+  line-height: 1.55;
+}
+
+.admin-review-card button {
+  width: 100%;
+  color: #8a3131;
+  border-color: rgba(138, 49, 49, 0.45);
+}
+
 .admin-image-groups {
   display: grid;
   gap: 1.2rem;
@@ -246,6 +293,11 @@
   }
 
   .admin-home-image-form {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-review-form,
+  .admin-review-grid {
     grid-template-columns: 1fr;
   }
 

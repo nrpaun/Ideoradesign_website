@@ -15,15 +15,26 @@ const initialHomeImageForm = {
   quote: ''
 };
 
+const initialReviewForm = {
+  name: '',
+  quote: '',
+  rating: 5,
+  photoUrl: '',
+  sortOrder: 0
+};
+
 function AdminPage({ onNavigate }) {
   const [contacts, setContacts] = useState([]);
   const [homeImages, setHomeImages] = useState([]);
   const [projectImages, setProjectImages] = useState([]);
+  const [reviews, setReviews] = useState([]);
   const [homeImageForm, setHomeImageForm] = useState(initialHomeImageForm);
   const [imageForm, setImageForm] = useState(initialImageForm);
+  const [reviewForm, setReviewForm] = useState(initialReviewForm);
   const [isLoading, setIsLoading] = useState(true);
   const [isSavingHomeImage, setIsSavingHomeImage] = useState(false);
   const [isSavingImage, setIsSavingImage] = useState(false);
+  const [isSavingReview, setIsSavingReview] = useState(false);
   const [notice, setNotice] = useState('');
 
   const projectImagesByCategory = useMemo(() => {
@@ -38,25 +49,28 @@ function AdminPage({ onNavigate }) {
     setNotice('');
 
     try {
-      const [contactsResponse, homeImagesResponse, imagesResponse] = await Promise.all([
+      const [contactsResponse, homeImagesResponse, imagesResponse, reviewsResponse] = await Promise.all([
         fetch('/api/contacts'),
         fetch('/api/home-images'),
-        fetch('/api/project-images')
+        fetch('/api/project-images'),
+        fetch('/api/reviews')
       ]);
 
-      if (!contactsResponse.ok || !homeImagesResponse.ok || !imagesResponse.ok) {
+      if (!contactsResponse.ok || !homeImagesResponse.ok || !imagesResponse.ok || !reviewsResponse.ok) {
         throw new Error('Unable to load admin data.');
       }
 
-      const [contactsData, homeImagesData, imagesData] = await Promise.all([
+      const [contactsData, homeImagesData, imagesData, reviewsData] = await Promise.all([
         contactsResponse.json(),
         homeImagesResponse.json(),
-        imagesResponse.json()
+        imagesResponse.json(),
+        reviewsResponse.json()
       ]);
 
       setContacts(contactsData);
       setHomeImages(homeImagesData);
       setProjectImages(imagesData);
+      setReviews(reviewsData);
     } catch (error) {
       setNotice(error.message || 'Unable to load admin data.');
     } finally {
@@ -84,6 +98,45 @@ function AdminPage({ onNavigate }) {
       ...prev,
       [name]: value
     }));
+  };
+
+  const handleReviewChange = (event) => {
+    const { name, value } = event.target;
+
+    setReviewForm((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleReviewSubmit = async (event) => {
+    event.preventDefault();
+    setIsSavingReview(true);
+    setNotice('');
+
+    try {
+      const response = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(reviewForm)
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Unable to save review.');
+      }
+
+      setReviews((prev) => [...prev, data.review]);
+      setReviewForm(initialReviewForm);
+      setNotice('Review saved. The homepage will show database reviews now.');
+    } catch (error) {
+      setNotice(error.message || 'Unable to save review.');
+    } finally {
+      setIsSavingReview(false);
+    }
   };
 
   const handleHomeImageSubmit = async (event) => {
@@ -191,6 +244,27 @@ function AdminPage({ onNavigate }) {
     }
   };
 
+  const handleDeleteReview = async (id) => {
+    setNotice('');
+
+    try {
+      const response = await fetch(`/api/reviews/${id}`, {
+        method: 'DELETE'
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Unable to delete review.');
+      }
+
+      setReviews((prev) => prev.filter((review) => review.id !== id));
+      setNotice('Review deleted.');
+    } catch (error) {
+      setNotice(error.message || 'Unable to delete review.');
+    }
+  };
+
   return (
     <div className="admin-route">
       <header className="admin-topbar">
@@ -210,7 +284,7 @@ function AdminPage({ onNavigate }) {
       <main className="admin-page">
         <section className="admin-hero">
           <p>Admin Panel</p>
-          <h1>Contacts and Project Images</h1>
+          <h1>Contacts, Reviews and Images</h1>
         </section>
 
         {notice && <div className="admin-notice">{notice}</div>}
@@ -254,6 +328,89 @@ function AdminPage({ onNavigate }) {
                 )}
               </tbody>
             </table>
+          </div>
+        </section>
+
+        <section className="admin-section">
+          <div className="admin-section-heading">
+            <h2>Client Reviews</h2>
+            <span>{reviews.length} saved</span>
+          </div>
+
+          <form className="admin-image-form admin-review-form" onSubmit={handleReviewSubmit}>
+            <label>
+              Client name
+              <input
+                type="text"
+                name="name"
+                value={reviewForm.name}
+                onChange={handleReviewChange}
+                placeholder="Client name"
+                required
+              />
+            </label>
+            <label>
+              Review
+              <input
+                type="text"
+                name="quote"
+                value={reviewForm.quote}
+                onChange={handleReviewChange}
+                placeholder="Client review text"
+                required
+              />
+            </label>
+            <label>
+              Rating
+              <input
+                type="number"
+                name="rating"
+                value={reviewForm.rating}
+                onChange={handleReviewChange}
+                min="1"
+                max="5"
+                required
+              />
+            </label>
+            <label>
+              Photo URL or path
+              <input
+                type="text"
+                name="photoUrl"
+                value={reviewForm.photoUrl}
+                onChange={handleReviewChange}
+                placeholder="/images/client.jpg"
+              />
+            </label>
+            <label>
+              Sort order
+              <input
+                type="number"
+                name="sortOrder"
+                value={reviewForm.sortOrder}
+                onChange={handleReviewChange}
+                min="0"
+              />
+            </label>
+            <button type="submit" disabled={isSavingReview}>
+              {isSavingReview ? 'Saving...' : 'Add Review'}
+            </button>
+          </form>
+
+          <div className="admin-review-grid">
+            {reviews.map((review) => (
+              <article key={review.id} className="admin-review-card">
+                <div>
+                  <strong>{review.name}</strong>
+                  <span>{review.rating}/5 rating</span>
+                </div>
+                <p>{review.quote}</p>
+                {review.photo_url && <span>{review.photo_url}</span>}
+                <button type="button" onClick={() => handleDeleteReview(review.id)}>
+                  Delete
+                </button>
+              </article>
+            ))}
           </div>
         </section>
 

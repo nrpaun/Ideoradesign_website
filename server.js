@@ -30,6 +30,40 @@ const pool = new Pool(
       }
 );
 
+const defaultClientReviews = [
+  {
+    name: 'Gaurav Bhalani',
+    quote:
+      'Amazing design, quality work and best execution. Best interior designer in Rajkot. They designed exactly as per requirement and budget.',
+    rating: 5
+  },
+  {
+    name: 'Changela & Associates',
+    quote: 'This was my second time and it is wonderful to work with, very professional and very accommodating to the client.',
+    rating: 5
+  },
+  {
+    name: 'TUSHAR WRELTT',
+    quote: 'Interior designing is innovative and feels good for a long time. Truly value for money service.',
+    rating: 5
+  },
+  {
+    name: 'Ruchit Sherathiya',
+    quote: 'They have unique designs. On-time, dedicated and punctual execution with very creative ideas.',
+    rating: 5
+  },
+  {
+    name: 'Jignesh Makawana',
+    quote: 'They understood expectations and budget and gave their best shots. Creative, trendy and impressive design.',
+    rating: 5
+  },
+  {
+    name: 'Mehul Maniar',
+    quote: 'Best Designing, Best Interior Solutions, Very Responsive and more than value for money.',
+    rating: 5
+  }
+];
+
 const initializeDatabase = async () => {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS contacts (
@@ -60,6 +94,32 @@ const initializeDatabase = async () => {
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS client_reviews (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(160) NOT NULL,
+      quote TEXT NOT NULL,
+      rating INTEGER NOT NULL DEFAULT 5 CHECK (rating BETWEEN 1 AND 5),
+      photo_url TEXT,
+      sort_order INTEGER DEFAULT 0,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `);
+
+  const reviewCount = await pool.query('SELECT COUNT(*)::int AS count FROM client_reviews');
+
+  if (reviewCount.rows[0].count === 0) {
+    for (const [index, review] of defaultClientReviews.entries()) {
+      await pool.query(
+        `
+          INSERT INTO client_reviews (name, quote, rating, sort_order)
+          VALUES ($1, $2, $3, $4)
+        `,
+        [review.name, review.quote, review.rating, index]
+      );
+    }
+  }
 };
 
 app.use(cors());
@@ -151,6 +211,102 @@ app.get('/api/project-images', async (_req, res) => {
     return res.status(500).json({
       ok: false,
       message: 'Failed to fetch project images.'
+    });
+  }
+});
+
+app.get('/api/reviews', async (_req, res) => {
+  try {
+    const result = await pool.query(
+      `
+        SELECT id, name, quote, rating, photo_url, sort_order, created_at
+        FROM client_reviews
+        ORDER BY sort_order ASC, id ASC
+      `
+    );
+
+    return res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    return res.status(500).json({
+      ok: false,
+      message: 'Failed to fetch reviews.'
+    });
+  }
+});
+
+app.post('/api/reviews', async (req, res) => {
+  const { name, quote, rating, photoUrl, sortOrder } = req.body ?? {};
+
+  if (!name || !quote) {
+    return res.status(400).json({
+      ok: false,
+      message: 'Reviewer name and review text are required.'
+    });
+  }
+
+  const numericRating = Number(rating);
+
+  if (!Number.isInteger(numericRating) || numericRating < 1 || numericRating > 5) {
+    return res.status(400).json({
+      ok: false,
+      message: 'Rating must be a whole number from 1 to 5.'
+    });
+  }
+
+  try {
+    const result = await pool.query(
+      `
+        INSERT INTO client_reviews (name, quote, rating, photo_url, sort_order)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING id, name, quote, rating, photo_url, sort_order, created_at
+      `,
+      [
+        name.trim(),
+        quote.trim(),
+        numericRating,
+        photoUrl?.trim() || null,
+        Number.isFinite(Number(sortOrder)) ? Number(sortOrder) : 0
+      ]
+    );
+
+    return res.status(201).json({
+      ok: true,
+      message: 'Review saved successfully.',
+      review: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Error saving review:', error);
+    return res.status(500).json({
+      ok: false,
+      message: 'Failed to save review.'
+    });
+  }
+});
+
+app.delete('/api/reviews/:id', async (req, res) => {
+  try {
+    const result = await pool.query(
+      'DELETE FROM client_reviews WHERE id = $1 RETURNING id',
+      [req.params.id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({
+        ok: false,
+        message: 'Review was not found.'
+      });
+    }
+
+    return res.json({
+      ok: true,
+      message: 'Review deleted successfully.'
+    });
+  } catch (error) {
+    console.error('Error deleting review:', error);
+    return res.status(500).json({
+      ok: false,
+      message: 'Failed to delete review.'
     });
   }
 });
