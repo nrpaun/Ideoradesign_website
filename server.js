@@ -56,6 +56,16 @@ const normalizeImagePath = (value) => {
   return imagePath;
 };
 
+const normalizeSortOrder = (value) => {
+  const numericValue = Number(value);
+
+  if (!Number.isFinite(numericValue)) {
+    return 0;
+  }
+
+  return Math.trunc(numericValue);
+};
+
 const legacyClientReviews = [
   {
     name: 'Gaurav Bhalani',
@@ -288,7 +298,7 @@ app.post('/api/reviews', async (req, res) => {
         quote.trim(),
         numericRating,
         normalizeImagePath(photoUrl),
-        Number.isFinite(Number(sortOrder)) ? Number(sortOrder) : 0
+        normalizeSortOrder(sortOrder)
       ]
     );
 
@@ -342,7 +352,7 @@ app.put('/api/reviews/:id', async (req, res) => {
         quote.trim(),
         numericRating,
         normalizeImagePath(photoUrl),
-        Number.isFinite(Number(sortOrder)) ? Number(sortOrder) : 0,
+        normalizeSortOrder(sortOrder),
         req.params.id
       ]
     );

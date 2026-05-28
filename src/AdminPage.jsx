@@ -23,6 +23,19 @@ const initialReviewForm = {
   sortOrder: 0
 };
 
+const sortReviews = (items) => {
+  return [...items].sort((first, second) => {
+    const firstOrder = Number(first.sort_order ?? 0);
+    const secondOrder = Number(second.sort_order ?? 0);
+
+    if (firstOrder !== secondOrder) {
+      return firstOrder - secondOrder;
+    }
+
+    return Number(first.id ?? 0) - Number(second.id ?? 0);
+  });
+};
+
 function AdminPage({ onNavigate }) {
   const [contacts, setContacts] = useState([]);
   const [homeImages, setHomeImages] = useState([]);
@@ -71,7 +84,7 @@ function AdminPage({ onNavigate }) {
       setContacts(contactsData);
       setHomeImages(homeImagesData);
       setProjectImages(imagesData);
-      setReviews(reviewsData);
+      setReviews(sortReviews(reviewsData));
     } catch (error) {
       setNotice(error.message || 'Unable to load admin data.');
     } finally {
@@ -132,10 +145,10 @@ function AdminPage({ onNavigate }) {
 
       setReviews((prev) => {
         if (editingReviewId) {
-          return prev.map((review) => (review.id === editingReviewId ? data.review : review));
+          return sortReviews(prev.map((review) => (review.id === editingReviewId ? data.review : review)));
         }
 
-        return [...prev, data.review];
+        return sortReviews([...prev, data.review]);
       });
       setReviewForm(initialReviewForm);
       setEditingReviewId(null);
@@ -433,7 +446,7 @@ function AdminPage({ onNavigate }) {
               <article key={review.id} className="admin-review-card">
                 <div>
                   <strong>{review.name}</strong>
-                  <span>{review.rating}/5 rating</span>
+                  <span>{review.rating}/5 rating · Order {review.sort_order}</span>
                 </div>
                 <p>{review.quote}</p>
                 {review.photo_url && <span>{review.photo_url}</span>}
