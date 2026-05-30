@@ -27,21 +27,21 @@ const services = [
     title: 'Residential Interior',
     description:
       "It's powerful, essential part of our daily lives & affects how we live, work & play.",
-    image: heroimage1
+    image: /images/heroimage1.jpeg
   },
   {
     number: '02',
     title: 'Commercial Interior',
     description:
       'Designing places of all kinds for both public and private businesses.',
-    image: heroimage2
+    image: /images/heroimage2.jpeg
   },
   {
     number: '03',
     title: 'Turnkey Solutions',
     description:
       'Specialized Turnkey Interior Solutions offering competitive cost certainty',
-    image: heroimage3
+    image: /images/heroimage3.jpeg
   }
 ];
 

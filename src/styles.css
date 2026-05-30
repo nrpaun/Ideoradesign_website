@@ -519,6 +519,13 @@ main {
 .service-chevron {
   line-height: 1;
   transform: translateY(-4px);
+  display: inline-block;
+  transition: transform 0.3s ease;
+  font-size: 20px;
+}
+
+.service-chevron.open {
+  transform: rotate(180deg);
 }
 
 .service-panel-body {
