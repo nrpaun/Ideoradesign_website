@@ -25,20 +25,23 @@ const services = [
   {
     number: '01',
     title: 'Residential Interior',
-    description: "It's powerful, essential part of our daily lives & affects how we live, work & play.",
-    image: 'https://picsum.photos/seed/jeepee-service-1/900/650'
+    description:
+      "It's powerful, essential part of our daily lives & affects how we live, work & play.",
+    image: whyChooseUs1
   },
   {
     number: '02',
     title: 'Commercial Interior',
-    description: 'Designing places of all kinds for both public and private businesses.',
-    image: 'https://picsum.photos/seed/jeepee-service-2/900/650'
+    description:
+      'Designing places of all kinds for both public and private businesses.',
+    image: whyChooseUs2
   },
   {
     number: '03',
     title: 'Turnkey Solutions',
-    description: 'Specialized Turnkey Interior Solutions offering competitive cost certainty',
-    image: 'https://picsum.photos/seed/jeepee-service-3/900/650'
+    description:
+      'Specialized Turnkey Interior Solutions offering competitive cost certainty',
+    image: whyChooseUs3
   }
 ];
 
@@ -48,6 +51,7 @@ function HomePage({ onNavigate }) {
   const [homepageImages, setHomepageImages] = useState([]);
   const [projectImages, setProjectImages] = useState([]);
   const [clientReviews, setClientReviews] = useState([]);
+  const [openService, setOpenService] = useState(0);
   const [contactForm, setContactForm] = useState({
     name: '',
     phone: '',
@@ -276,21 +280,40 @@ function HomePage({ onNavigate }) {
             learn about you, and make something beautiful together.
           </p>
           <div className="services-showcase">
-            {services.map((item) => (
+            {services.map((item, index) => (
               <article key={item.number} className="service-panel">
-                <header className="service-panel-header">
+                <header
+                  className="service-panel-header"
+                  onClick={() =>
+                    setOpenService(
+                      openService === index ? null : index
+                    )
+                  }
+                  style={{ cursor: 'pointer' }}
+                >
                   <div>
                     <span>{item.number}</span>
                     <h3>{item.title}</h3>
                   </div>
-                  <span className="service-chevron" aria-hidden="true">
+
+                  <span
+                    className={`service-chevron ${openService === index ? 'open' : ''
+                      }`}
+                    aria-hidden="true"
+                  >
                     &#8964;
                   </span>
                 </header>
-                <div className="service-panel-body">
-                  <p>{item.description}</p>
-                  <img src={item.image} alt={item.title} />
-                </div>
+
+                {openService === index && (
+                  <div className="service-panel-body">
+                    <p>{item.description}</p>
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                    />
+                  </div>
+                )}
               </article>
             ))}
           </div>
