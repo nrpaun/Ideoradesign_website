@@ -235,10 +235,18 @@
 
   .about-topbar {
     padding-inline: 1rem;
+    align-items: center;
   }
 
   .about-logo-badge {
     width: 160px;
+  }
+
+  .about-topnav {
+    max-width: calc(100% - 175px);
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.55rem 1rem;
   }
 
   .founders-section {
@@ -269,20 +277,83 @@
 }
 
 @media (max-width: 640px) {
+  .about-topbar {
+    gap: 0.7rem;
+    align-items: flex-start;
+    padding: 0.75rem 0.9rem 0.65rem;
+  }
+
+  .about-logo-badge {
+    width: 122px;
+  }
+
+  .about-topnav {
+    max-width: calc(100% - 132px);
+    gap: 0.4rem 0.7rem;
+    padding-top: 0.1rem;
+    line-height: 1.1;
+  }
+
+  .about-topnav a {
+    font-size: 0.78rem;
+  }
+
   .about-hero {
-    padding-inline: 1rem;
+    padding: 2.4rem 1rem 1.4rem;
+  }
+
+  .about-hero h1 {
+    font-size: clamp(2.35rem, 13vw, 3.25rem);
+    line-height: 1;
   }
 
   .about-intro {
-    padding: 1.2rem 1rem;
+    margin-top: 1.35rem;
+  }
+
+  .about-intro p {
+    font-size: 0.98rem;
+    line-height: 1.7;
   }
 
   .founders-section {
     width: calc(100% - 2rem);
+    padding: 1rem 0 3rem;
+  }
+
+  .founder-card {
+    gap: 1.15rem;
+  }
+
+  .founder-card + .founder-card {
+    margin-top: 2.4rem;
   }
 
   .founder-image {
     max-width: 100%;
-    border-radius: 24px;
+    border-radius: 20px;
+  }
+
+  .founder-copy h2 {
+    font-size: clamp(1.9rem, 9vw, 2.55rem);
+  }
+
+  .founder-copy p {
+    font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .about-logo-badge {
+    width: 108px;
+  }
+
+  .about-topnav {
+    max-width: calc(100% - 118px);
+    gap: 0.35rem 0.55rem;
+  }
+
+  .about-topnav a {
+    font-size: 0.72rem;
   }
 }
