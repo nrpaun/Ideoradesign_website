@@ -27,21 +27,21 @@ const services = [
     title: 'Residential Interior',
     description:
       "It's powerful, essential part of our daily lives & affects how we live, work & play.",
-    image: /images/heroimage1.jpeg
+    image: heroimage1
   },
   {
     number: '02',
     title: 'Commercial Interior',
     description:
       'Designing places of all kinds for both public and private businesses.',
-    image: /images/heroimage2.jpeg
+    image: heroimage2
   },
   {
     number: '03',
     title: 'Turnkey Solutions',
     description:
       'Specialized Turnkey Interior Solutions offering competitive cost certainty',
-    image: /images/heroimage3.jpeg
+    image: heroimage3
   }
 ];
 
@@ -282,14 +282,12 @@ function HomePage({ onNavigate }) {
           <div className="services-showcase">
             {services.map((item, index) => (
               <article key={item.number} className="service-panel">
-                <header
+                <button
+                  type="button"
                   className="service-panel-header"
-                  onClick={() =>
-                    setOpenService(
-                      openService === index ? null : index
-                    )
-                  }
-                  style={{ cursor: 'pointer' }}
+                  onClick={() => setOpenService(openService === index ? null : index)}
+                  aria-expanded={openService === index}
+                  aria-controls={`service-panel-${item.number}`}
                 >
                   <div>
                     <span>{item.number}</span>
@@ -303,10 +301,10 @@ function HomePage({ onNavigate }) {
                   >
                     &#8964;
                   </span>
-                </header>
+                </button>
 
                 {openService === index && (
-                  <div className="service-panel-body">
+                  <div id={`service-panel-${item.number}`} className="service-panel-body">
                     <p>{item.description}</p>
                     <img
                       src={item.image}
