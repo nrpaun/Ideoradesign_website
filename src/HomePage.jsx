@@ -51,7 +51,7 @@ function HomePage({ onNavigate }) {
   const [homepageImages, setHomepageImages] = useState([]);
   const [projectImages, setProjectImages] = useState([]);
   const [clientReviews, setClientReviews] = useState([]);
-  const [openService, setOpenService] = useState(0);
+  const [openServices, setOpenServices] = useState(() => services.map((service) => service.number));
   const [contactForm, setContactForm] = useState({
     name: '',
     phone: '',
@@ -280,40 +280,43 @@ function HomePage({ onNavigate }) {
             learn about you, and make something beautiful together.
           </p>
           <div className="services-showcase">
-            {services.map((item, index) => (
-              <article key={item.number} className="service-panel">
-                <button
-                  type="button"
-                  className="service-panel-header"
-                  onClick={() => setOpenService(openService === index ? null : index)}
-                  aria-expanded={openService === index}
-                  aria-controls={`service-panel-${item.number}`}
-                >
-                  <div>
-                    <span>{item.number}</span>
-                    <h3>{item.title}</h3>
-                  </div>
+            {services.map((item) => {
+              const isOpen = openServices.includes(item.number);
 
-                  <span
-                    className={`service-chevron ${openService === index ? 'open' : ''
-                      }`}
-                    aria-hidden="true"
+              return (
+                <article key={item.number} className="service-panel">
+                  <button
+                    type="button"
+                    className="service-panel-header"
+                    onClick={() =>
+                      setOpenServices((current) =>
+                        current.includes(item.number)
+                          ? current.filter((number) => number !== item.number)
+                          : [...current, item.number]
+                      )
+                    }
+                    aria-expanded={isOpen}
+                    aria-controls={`service-panel-${item.number}`}
                   >
-                    &#8964;
-                  </span>
-                </button>
+                    <div>
+                      <span>{item.number}</span>
+                      <h3>{item.title}</h3>
+                    </div>
 
-                {openService === index && (
-                  <div id={`service-panel-${item.number}`} className="service-panel-body">
-                    <p>{item.description}</p>
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                    />
-                  </div>
-                )}
-              </article>
-            ))}
+                    <span className={`service-chevron ${isOpen ? 'open' : ''}`} aria-hidden="true">
+                      &#8964;
+                    </span>
+                  </button>
+
+                  {isOpen && (
+                    <div id={`service-panel-${item.number}`} className="service-panel-body">
+                      <p>{item.description}</p>
+                      <img src={item.image} alt={item.title} />
+                    </div>
+                  )}
+                </article>
+              );
+            })}
           </div>
         </section>
 
