@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import pg from 'pg';
 import path from 'path';
+import { pathToFileURL } from 'url';
 import { fileURLToPath } from 'url';
 
 dotenv.config();
@@ -159,6 +160,20 @@ app.use(express.json());
 
 app.use('/images', express.static('public/images'));
 app.use(express.static(distPath));
+
+let databaseReady;
+
+const ensureDatabase = async (_req, _res, next) => {
+  try {
+    databaseReady ??= initializeDatabase();
+    await databaseReady;
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+app.use('/api', ensureDatabase);
 
 app.get('/', (_req, res) => {
   res.sendFile(path.join(distPath, 'index.html'));
@@ -549,19 +564,42 @@ app.delete('/api/home-images/:id', async (req, res) => {
 
 app.use((req, res, next) => {
   if (req.path.startsWith('/api')) {
-    return next();
+    return res.status(404).json({
+      ok: false,
+      message: 'API route was not found.'
+    });
   }
 
   return res.sendFile(path.join(distPath, 'index.html'));
 });
 
-initializeDatabase()
-  .then(() => {
-    app.listen(port, () => {
-      console.log(`API server running on http://localhost:${port}`);
-    });
-  })
-  .catch((error) => {
-    console.error('Failed to initialize database:', error);
-    process.exit(1);
+app.use((error, req, res, next) => {
+  if (!req.path.startsWith('/api')) {
+    return next(error);
+  }
+
+  console.error('API error:', error);
+  return res.status(500).json({
+    ok: false,
+    message: 'API server failed to start.'
   });
+});
+
+const isDirectRun = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+
+if (isDirectRun) {
+  databaseReady = initializeDatabase();
+
+  databaseReady
+    .then(() => {
+      app.listen(port, () => {
+        console.log(`API server running on http://localhost:${port}`);
+      });
+    })
+    .catch((error) => {
+      console.error('Failed to initialize database:', error);
+      process.exit(1);
+    });
+}
+
+export default app;
