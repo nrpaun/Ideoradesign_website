@@ -7,14 +7,14 @@ import './about-us.css';
 const founders = [
   {
     name: 'PRINCE MANIYAR',
-    role: 'Founder',
+    role: '(Interior Designer)',
     className: 'founder-card founder-left',
     imageClassName: 'founder-image founder-image-jigar',
     image: founderImage
   },
   {
     name: 'MAHIPAL NAKUM',
-    role: 'Founder',
+    role: '(Interior Designer)',
     className: 'founder-card founder-right',
     imageClassName: 'founder-image founder-image-dushyant',
     image: founderImage
