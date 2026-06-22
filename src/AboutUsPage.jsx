@@ -6,15 +6,15 @@ import './about-us.css';
 
 const founders = [
   {
-    name: 'ID PRINCE MANIYAR',
-    role: 'Founder',
+    name: 'PRINCE MANIYAR',
+    role: '(Interior Designer)',
     className: 'founder-card founder-left',
     imageClassName: 'founder-image founder-image-jigar',
     image: founderImage
   },
   {
-    name: 'ID MAHIPAL NAKUM',
-    role: 'Founder',
+    name: 'MAHIPAL NAKUM',
+    role: '(Interior Designer)',
     className: 'founder-card founder-right',
     imageClassName: 'founder-image founder-image-dushyant',
     image: founderImage
